@@ -120,10 +120,3 @@ Este proyecto forma parte de mi práctica con React y TypeScript y está enfocad
 ## 📌 Nota
 
 Este proyecto continúa en desarrollo. Algunas funcionalidades, estructuras y decisiones de diseño pueden cambiar conforme avance su implementación.
-
-```
-
-Yo **sí dejaría el "🚧 Proyecto en construcción" arriba**. Para un repo de portafolio es mejor que alguien que lo vea entienda inmediatamente que no está viendo un producto terminado, en lugar de encontrarse con funcionalidades que todavía no existen.
-
-Además, conforme vayas terminándolo, podemos ir cambiando el README para que pase de **"proyecto en construcción" → "proyecto terminado"**, añadiendo screenshots, funcionalidades reales, decisiones técnicas y quizá un diagrama sencillo de cómo manejas `Person`, `Subscription` y los pagos.
-```
