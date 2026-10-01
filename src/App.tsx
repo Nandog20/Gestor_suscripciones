@@ -4,12 +4,13 @@ import Header from './components/Header';
 import DialogPerson from './components/DialogPerson';
 import { useSubscription } from './hooks/useSubscription';
 import DialogSubscription from './components/DialogSubscription';
+import SubscriptionCard from './components/SubscriptionCard';
 
 export default function App() {
 
   const [isPersonOpen, setPersonOpen] = useState(false)
   const [isSubscriptionOpen, setSubscriptionOpen] = useState(false)
-  const {people, addPerson, addSubscription} = useSubscription()
+  const {people, addPerson, addSubscription, subscriptions} = useSubscription()
 
   return (
     <div>
@@ -18,9 +19,9 @@ export default function App() {
         <h2 className="text-2xl font-semibold text-gray-900 mb-4">Dashboard</h2>
         {/* 1 col en móvil, 2 en tablet, 3 en desktop */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <Card title="Suscripciones" quantity={4} />
+          <Card title="Suscripciones" quantity={subscriptions.length} />
 
-          <Card title="Suscripciones Pagadas" quantity={4} missing={2} />
+          <Card title="Suscripciones Pagadas" quantity={subscriptions.length} missing={2} />
 
           <Card title="Total a pagar" quantity={400} missing={250} format="currency"/>
         </div>
@@ -36,8 +37,9 @@ export default function App() {
         <DialogSubscription people={people} isOpen = {isSubscriptionOpen} onClose={()=> setSubscriptionOpen(false) } addSubscription= {addSubscription}/>
       </section>
 
-      <section>
-        <h2>Suscripciones</h2>
+      <section className="px-4 py-6">
+        <h2 className="text-2xl font-semibold text-gray-900 mb-4">Suscripciones</h2>
+        <SubscriptionCard subscriptions={subscriptions}/>
       </section>
       <section>
         <h2>Personas</h2>

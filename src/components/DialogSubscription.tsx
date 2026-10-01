@@ -9,51 +9,59 @@ interface DialogProps {
   addSubscription: (subscription : Subscription) => void
 }
 
+// price en 0 = campo vacío en el formulario (se valida con min={1}/required)
+const emptySubscription: Subscription = {
+  id: '',
+  name: '',
+  price: 0,
+  paymentDay: 1,
+  participants: [],
+};
+
 export default function DialogSubscription({ isOpen, onClose, people, addSubscription }: DialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
 
-  const [subscription, setSubscription] = useState<Subscription>({
-    id: '',
-    name: '',
-    price: 1,
-    paymentDay: 1,
-    participants: [],
-  });
+  const [subscription, setSubscription] = useState<Subscription>(emptySubscription);
+  const [error, setError] = useState('');
 
   const isParticipantSelected = (personId: string) =>
-    subscription.participants.some((participant) => participant.person.id === personId);
+    subscription.participants.some((participant) => participant.id === personId);
 
   const toggleParticipant = (person: Person) => {
+    setError('');
     setSubscription((prev) => {
-      const isSelected = prev.participants.some(
-        (participant) => participant.person.id === person.id,
-      );
+      const isSelected = prev.participants.some((participant) => participant.id === person.id);
 
       return {
         ...prev,
         participants: isSelected
-          ? prev.participants.filter(
-              (participant) => participant.person.id !== person.id,
-            )
-          : [...prev.participants, { person }],
+          ? prev.participants.filter((participant) => participant.id !== person.id)
+          : [...prev.participants, person],
       };
     });
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    if(subscription.name.trim() == '' && subscription.participants.length == 0){
-      return
-    }
-    const newSub : Subscription = {
-      ...subscription,
-      id: Date.now().toString(),
-      name: subscription.name.trim()
+    e.preventDefault();
+
+    const name = subscription.name.trim();
+
+    if (name === '' || subscription.participants.length === 0) {
+      setError('Debes indicar un nombre y al menos un participante.');
+      return;
     }
 
-    addSubscription(newSub)
-    
-  }
+    const newSub: Subscription = {
+      ...subscription,
+      name,
+      id: Date.now().toString(),
+    };
+
+    addSubscription(newSub);
+    setSubscription(emptySubscription);
+    setError('');
+    onClose();
+  };
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -61,11 +69,27 @@ export default function DialogSubscription({ isOpen, onClose, people, addSubscri
     if (!dialog) return;
 
     if (isOpen && !dialog.open) {
+      setSubscription(emptySubscription);
+      setError('');
       dialog.showModal();
     } else if (!isOpen && dialog.open) {
       dialog.close();
     }
   }, [isOpen]);
+
+  // Escape (o el botón de navegación) cierra el <dialog> nativo sin pasar por
+  // onClose, lo que dejaría isOpen en true. Sincronizamos aquí.
+  useEffect(() => {
+    const dialog = dialogRef.current;
+
+    if (!dialog) return;
+
+    const handleCancel = () => onClose();
+
+    dialog.addEventListener('cancel', handleCancel);
+
+    return () => dialog.removeEventListener('cancel', handleCancel);
+  }, [onClose]);
 
   return (
     <dialog ref={dialogRef}>
@@ -81,7 +105,11 @@ export default function DialogSubscription({ isOpen, onClose, people, addSubscri
             type="text"
             id="Sub"
             placeholder="Netflix"
-            onChange={e => setSubscription({...subscription, name: e.target.value})}
+            value={subscription.name}
+            onChange={e => {
+              setError('');
+              setSubscription(prev => ({ ...prev, name: e.target.value}));
+            }}
             required
             className="rounded-xl border border-gray-400 px-3 py-2 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
@@ -95,7 +123,8 @@ export default function DialogSubscription({ isOpen, onClose, people, addSubscri
             id="price"
             min={1}
             placeholder="250"
-            onChange={e => setSubscription({...subscription, price: Number(e.target.value)})}
+            value={subscription.price === 0 ? '' : subscription.price}
+            onChange={e => setSubscription(prev => ({ ...prev, price: e.target.value === '' ? 0 : Number(e.target.value)}))}
             required
             className="rounded-xl border border-gray-400 px-3 py-2 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
@@ -110,7 +139,8 @@ export default function DialogSubscription({ isOpen, onClose, people, addSubscri
             min={1}
             max={31}
             placeholder="12"
-            onChange={e => setSubscription({...subscription, paymentDay: Number(e.target.value)})}
+            value={subscription.paymentDay === 0 ? '' : subscription.paymentDay}
+            onChange={e => setSubscription(prev => ({ ...prev, paymentDay: e.target.value === '' ? 0 : Number(e.target.value)}))}
             required
             className="rounded-xl border border-gray-400 px-3 py-2 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
@@ -135,6 +165,8 @@ export default function DialogSubscription({ isOpen, onClose, people, addSubscri
               </label>
             ))}
           </div>
+
+          {error && <p className="text-sm text-red-600">{error}</p>}
 
           <button
             type="submit"

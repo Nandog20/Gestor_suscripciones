@@ -1,9 +1,9 @@
-import type { Participant} from "./Person";
+import type { Person } from "./Person";
 
 export interface Subscription {
     id: string,
     name: string,
     price: number,
     paymentDay: number,
-    participants: Participant[]
+    participants: Person[]
 }
