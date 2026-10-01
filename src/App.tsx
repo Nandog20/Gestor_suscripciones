@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import Card from './components/Card';
 import Header from './components/Header';
-import Dialog from './components/DialogPerson';
+import DialogPerson from './components/DialogPerson';
 import { useSubscription } from './hooks/useSubscription';
+import DialogSubscription from './components/DialogSubscription';
 
 export default function App() {
 
   const [isPersonOpen, setPersonOpen] = useState(false)
+  const [isSubscriptionOpen, setSubscriptionOpen] = useState(false)
   const {people, addPerson} = useSubscription()
 
   return (
@@ -25,12 +27,13 @@ export default function App() {
       </section>
 
       <section className="flex items-start gap-4 p-2 align-middle">
-        <button className= "bg-black text-white py-1 px-2 rounded-xl cursor-pointer hover:scale-105"> + Agregar suscripción</button>
+        <button className= "bg-black text-white py-1 px-2 rounded-xl cursor-pointer hover:scale-105" onClick={()=> setSubscriptionOpen(true)}> + Agregar suscripción</button>
         <button className= " border border-gray-400 py-1 px-2 rounded-xl cursor-pointer hover:scale-105" onClick={()=> setPersonOpen(true)}>Agregar persona</button>
       </section>
       {/*dialogs*/}
       <section className="items-center">
-        <Dialog isOpen = {isPersonOpen} onClose={()=> setPersonOpen(false)} addPerson={addPerson}/>
+        <DialogPerson isOpen = {isPersonOpen} onClose={()=> setPersonOpen(false)} addPerson={addPerson}/>
+        <DialogSubscription people={people} isOpen = {isSubscriptionOpen} onClose={()=> setSubscriptionOpen(false) }/>
       </section>
 
       <section>
