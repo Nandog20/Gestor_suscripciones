@@ -9,7 +9,7 @@ export default function App() {
 
   const [isPersonOpen, setPersonOpen] = useState(false)
   const [isSubscriptionOpen, setSubscriptionOpen] = useState(false)
-  const {people, addPerson} = useSubscription()
+  const {people, addPerson, addSubscription} = useSubscription()
 
   return (
     <div>
@@ -33,7 +33,7 @@ export default function App() {
       {/*dialogs*/}
       <section className="items-center">
         <DialogPerson isOpen = {isPersonOpen} onClose={()=> setPersonOpen(false)} addPerson={addPerson}/>
-        <DialogSubscription people={people} isOpen = {isSubscriptionOpen} onClose={()=> setSubscriptionOpen(false) }/>
+        <DialogSubscription people={people} isOpen = {isSubscriptionOpen} onClose={()=> setSubscriptionOpen(false) } addSubscription= {addSubscription}/>
       </section>
 
       <section>

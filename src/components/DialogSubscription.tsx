@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import type { Person } from '../types/Person';
 import type { Subscription } from '../types/Subscription';
 
@@ -6,12 +6,14 @@ interface DialogProps {
   isOpen: boolean;
   onClose: () => void;
   people: Person[];
+  addSubscription: (subscription : Subscription) => void
 }
 
-export default function DialogSubscription({ isOpen, onClose, people }: DialogProps) {
+export default function DialogSubscription({ isOpen, onClose, people, addSubscription }: DialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   const [subscription, setSubscription] = useState<Subscription>({
+    id: '',
     name: '',
     price: 1,
     paymentDay: 1,
@@ -38,6 +40,21 @@ export default function DialogSubscription({ isOpen, onClose, people }: DialogPr
     });
   };
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if(subscription.name.trim() == '' && subscription.participants.length == 0){
+      return
+    }
+    const newSub : Subscription = {
+      ...subscription,
+      id: Date.now().toString(),
+      name: subscription.name.trim()
+    }
+
+    addSubscription(newSub)
+    
+  }
+
   useEffect(() => {
     const dialog = dialogRef.current;
 
@@ -55,7 +72,7 @@ export default function DialogSubscription({ isOpen, onClose, people }: DialogPr
       <div className="fixed inset-0 m-auto flex h-fit max-h-[90svh] w-full max-w-md flex-col gap-4 overflow-y-auto rounded-2xl border border-gray-300 bg-white p-6 text-gray-900 shadow-xl backdrop:bg-black/50 backdrop:blur-sm">
         <h2 className="text-2xl font-semibold">Agregar una suscripción</h2>
 
-        <form className="flex flex-col gap-3">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <label htmlFor="Sub" className="text-sm font-medium text-gray-700">
             Nombre suscripción:
           </label>
