@@ -1,5 +1,6 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Person } from '../types/Person';
+import type { Subscription } from '../types/Subscription';
 
 interface DialogProps {
   isOpen: boolean;
@@ -9,6 +10,14 @@ interface DialogProps {
 
 export default function DialogSubscription({ isOpen, onClose, people }: DialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
+
+  const [subscription, setSubscription] = useState<Subscription>({
+    name: '',
+    price: 1,
+    paymentDay: 1,
+    participants: []
+
+  })
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -36,6 +45,7 @@ export default function DialogSubscription({ isOpen, onClose, people }: DialogPr
             type="text"
             id="Sub"
             placeholder="Netflix"
+            onChange={e => setSubscription({...subscription, name: e.target.value})}
             required
             className="rounded-xl border border-gray-400 px-3 py-2 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
@@ -49,6 +59,8 @@ export default function DialogSubscription({ isOpen, onClose, people }: DialogPr
             id="price"
             min={1}
             placeholder="250"
+            onChange={e => setSubscription({...subscription, price: Number(e.target.value)})}
+            required
             className="rounded-xl border border-gray-400 px-3 py-2 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
 
@@ -62,6 +74,8 @@ export default function DialogSubscription({ isOpen, onClose, people }: DialogPr
             min={1}
             max={31}
             placeholder="12"
+            onChange={e => setSubscription({...subscription, paymentDay: Number(e.target.value)})}
+            required
             className="rounded-xl border border-gray-400 px-3 py-2 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
 
