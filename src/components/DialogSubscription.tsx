@@ -15,9 +15,28 @@ export default function DialogSubscription({ isOpen, onClose, people }: DialogPr
     name: '',
     price: 1,
     paymentDay: 1,
-    participants: []
+    participants: [],
+  });
 
-  })
+  const isParticipantSelected = (personId: string) =>
+    subscription.participants.some((participant) => participant.person.id === personId);
+
+  const toggleParticipant = (person: Person) => {
+    setSubscription((prev) => {
+      const isSelected = prev.participants.some(
+        (participant) => participant.person.id === person.id,
+      );
+
+      return {
+        ...prev,
+        participants: isSelected
+          ? prev.participants.filter(
+              (participant) => participant.person.id !== person.id,
+            )
+          : [...prev.participants, { person }],
+      };
+    });
+  };
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -91,6 +110,8 @@ export default function DialogSubscription({ isOpen, onClose, people }: DialogPr
               >
                 <input
                   type="checkbox"
+                  checked={isParticipantSelected(person.id)}
+                  onChange={() => toggleParticipant(person)}
                   className="h-4 w-4 cursor-pointer accent-black"
                 />
                 {person.name}

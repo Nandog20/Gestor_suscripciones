@@ -4,6 +4,5 @@ export interface Person {
 }
 
 export interface Participant {
-    person: Person,
-    hasPaid: boolean
+    person: Person
 }
